@@ -1,6 +1,6 @@
 # Getting Started with Geografic-app
 
-This project was build to make a geografic interactive map with leaflet.
+This project was build to make a geografic interactive map with leaflet to add geometric objects.
 
 ## Available Scripts
 
