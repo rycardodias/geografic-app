@@ -34,17 +34,29 @@ export const Map = ({ filterState }) => {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
-            {console.log(filterState)}
             {filterState.addingMarkers && <AddMarker markerListChange={handleMarkerListChange} />}
 
-            {/* SHOW ALL PINS */}
-            {!loading && filterState.showMarkers && (
+            {/* SHOWING ZONE */}
+
+            {!loading && filterState.showAll && (
                 markerList.map((e, i) => {
                     return <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
                         <Popup>{e.label}</Popup>
                     </Marker >
                 })
-            )}
+            )
+
+            }
+
+            {!loading && !filterState.showAll &&
+                filterState.showMarkers && (
+                    markerList.map((e, i) => {
+                        return <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
+                            <Popup>{e.label}</Popup>
+                        </Marker >
+                    })
+                )
+            }
             {/* <LocationMarker /> */}
         </MapContainer>
     )

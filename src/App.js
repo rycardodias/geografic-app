@@ -6,13 +6,22 @@ import React, { useState, useEffect } from 'react'
 
 function App() {
   const [filterState, setfilterState] = useState({
-    showMarkers: true,
+    showAll: true,
+    showMarkers: false,
     addingMarkers: false,
+    showLines: false,
+    addingLines: false,
+    showPolygon: false,
+    addingPolygon: false
   }
   )
 
-  const handleFilterState = (e) => setfilterState({ ...filterState, ...e })
+  const handleFilterState = async (e) => {
+    let obj = filterState
 
+    e.map(item => { obj = { ...obj, ...item } })
+    setfilterState(obj)
+  }
 
   return (
     <div className="App">
@@ -23,8 +32,6 @@ function App() {
           <Col sm={10}><Map filterState={filterState} /></Col>
         </Row>
       </Container>
-
-
     </div>
   );
 }
