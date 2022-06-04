@@ -1,5 +1,5 @@
 import { useMapEvents } from 'react-leaflet'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 export default function AddMarker(props) {
     const [coordinates, setcoordinates] = useState([])

@@ -1,15 +1,43 @@
 import React, { useState, useEffect } from 'react'
-import { MapContainer, TileLayer, useMap, Marker, Popup, useMapEvents } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, Polygon } from 'react-leaflet'
 import AddMarker from './events/AddMarker'
+import AddPolygon from './events/AddPolygon'
 
 export const Map = ({ filterState }) => {
     const [loading, setloading] = useState(true)
     const [markerList, setmarkerList] = useState([])
+    const [polygonList, setpolygonList] = useState([])
+    const [newPolygonList, setnewPolygonList] = useState([])
 
     async function handleMarkerListChange(e) {
         await setloading(true)
         await setmarkerList(old => [...old, e])
         await setloading(false)
+    }
+
+    async function handlePolygonListChange(e) {
+        await setloading(true)
+
+        const list = JSON.parse(localStorage.getItem('polygonList')) || [];
+
+        let objIndex = list.findIndex((i => i.id === e.id));
+        console.log(objIndex)
+        if (objIndex === -1) {
+            await setpolygonList(old => [...old, e])
+        } else {
+            let newList = [...polygonList]
+
+            newList[objIndex].coordinates = e.coordinates
+
+            await setpolygonList(newList)
+        }
+
+        await setloading(false)
+    }
+
+    function handlePolygonUnmount (e) {
+        console.log("entrou")
+        localStorage.setItem('polygonList', JSON.stringify(polygonList))
     }
 
     useEffect(() => {
@@ -19,9 +47,19 @@ export const Map = ({ filterState }) => {
     }, [markerList]);
 
     useEffect(() => {
-        const list = JSON.parse(localStorage.getItem('markerList')) || [];
+        const list = JSON.parse(localStorage.getItem('polygonList')) || [];
+        
+        polygonList.length > list.length &&
+            localStorage.setItem('polygonList', JSON.stringify(polygonList))
+    }, [polygonList]);
 
-        list.length > 0 && setmarkerList(list)
+    useEffect(() => {
+        const markerList = JSON.parse(localStorage.getItem('markerList')) || [];
+        markerList.length > 0 && setmarkerList(markerList)
+
+        const polygonList = JSON.parse(localStorage.getItem('polygonList')) || [];
+        polygonList.length > 0 && setpolygonList(polygonList)
+
         setloading(false)
 
     }, []);
@@ -35,18 +73,28 @@ export const Map = ({ filterState }) => {
             />
 
             {filterState.addingMarkers && <AddMarker markerListChange={handleMarkerListChange} />}
+            {filterState.addingPolygon && <AddPolygon polygonListChange={handlePolygonListChange} unmount={handlePolygonUnmount} />}
 
             {/* SHOWING ZONE */}
 
-            {!loading && filterState.showAll && (
+            {!loading && filterState.showAll &&
                 markerList.map((e, i) => {
                     return <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
                         <Popup>{e.label}</Popup>
                     </Marker >
                 })
-            )
-
             }
+
+            {!loading && filterState.showAll &&
+                polygonList.map((e, i) => {
+                    return <Polygon key={i} positions={e.coordinates} >
+                        <Popup>{e.label}</Popup>
+                    </Polygon >
+                })
+            }
+
+
+            {/* SHOW INDIVIDUAL */}
 
             {!loading && !filterState.showAll &&
                 filterState.showMarkers && (
@@ -54,6 +102,16 @@ export const Map = ({ filterState }) => {
                         return <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
                             <Popup>{e.label}</Popup>
                         </Marker >
+                    })
+                )
+            }
+
+            {!loading && !filterState.showAll &&
+                filterState.showPolygon && (
+                    polygonList.map((e, i) => {
+                        return <Polygon key={i} positions={e.coordinates} >
+                            <Popup>{e.label}</Popup>
+                        </Polygon >
                     })
                 )
             }
