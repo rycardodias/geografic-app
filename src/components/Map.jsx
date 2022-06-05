@@ -7,7 +7,6 @@ export const Map = ({ filterState }) => {
     const [loading, setloading] = useState(true)
     const [markerList, setmarkerList] = useState([])
     const [polygonList, setpolygonList] = useState([])
-    const [newPolygonList, setnewPolygonList] = useState([])
 
     async function handleMarkerListChange(e) {
         await setloading(true)
@@ -21,7 +20,6 @@ export const Map = ({ filterState }) => {
         const list = JSON.parse(localStorage.getItem('polygonList')) || [];
 
         let objIndex = list.findIndex((i => i.id === e.id));
-        console.log(objIndex)
         if (objIndex === -1) {
             await setpolygonList(old => [...old, e])
         } else {
@@ -30,15 +28,12 @@ export const Map = ({ filterState }) => {
             newList[objIndex].coordinates = e.coordinates
 
             await setpolygonList(newList)
+            await localStorage.setItem('polygonList', JSON.stringify(newList))
         }
 
         await setloading(false)
     }
 
-    function handlePolygonUnmount (e) {
-        console.log("entrou")
-        localStorage.setItem('polygonList', JSON.stringify(polygonList))
-    }
 
     useEffect(() => {
         const list = JSON.parse(localStorage.getItem('markerList')) || [];
@@ -48,7 +43,7 @@ export const Map = ({ filterState }) => {
 
     useEffect(() => {
         const list = JSON.parse(localStorage.getItem('polygonList')) || [];
-        
+
         polygonList.length > list.length &&
             localStorage.setItem('polygonList', JSON.stringify(polygonList))
     }, [polygonList]);
@@ -73,9 +68,10 @@ export const Map = ({ filterState }) => {
             />
 
             {filterState.addingMarkers && <AddMarker markerListChange={handleMarkerListChange} />}
-            {filterState.addingPolygon && <AddPolygon polygonListChange={handlePolygonListChange} unmount={handlePolygonUnmount} />}
+            {filterState.addingPolygon && <AddPolygon polygonListChange={handlePolygonListChange} />}
 
             {/* SHOWING ZONE */}
+            {!loading && console.log(polygonList, 'lista')}
 
             {!loading && filterState.showAll &&
                 markerList.map((e, i) => {

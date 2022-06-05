@@ -4,13 +4,9 @@ import { useState, useEffect } from 'react'
 export default function AddPolygon(props) {
     const [coordinates, setcoordinates] = useState([])
     const [id, setid] = useState(Math.random().toString(16).slice(2))
+    const [first, setfirst] = useState(true)
 
-    useEffect(() => {
-        return () => {
-            props.unmount()
-            // Anything in here is fired on component unmount.
-        }
-    }, [])
+
 
     const map = useMapEvents({
         mousedown(e) {
@@ -21,12 +17,13 @@ export default function AddPolygon(props) {
         mouseup() {
             let label = ''
 
-            if (coordinates.length > 0) {
+            if (!first) {
                 props.polygonListChange({ coordinates, label, id })
             } else {
                 label = prompt('Insert the label here!');
 
                 label && props.polygonListChange({ coordinates, label, id })
+                setfirst(false)
             }
         },
 
