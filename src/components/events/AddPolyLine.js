@@ -1,7 +1,7 @@
 import { useMapEvents } from 'react-leaflet'
 import { useState } from 'react'
 
-export default function AddPolygon(props) {
+export default function AddPolyLine(props) {
     const [coordinates, setcoordinates] = useState([])
     const [id] = useState(Math.random().toString(16).slice(2))
     const [first, setfirst] = useState(true)
@@ -18,11 +18,11 @@ export default function AddPolygon(props) {
             let label = ''
 
             if (!first) {
-                props.polygonListChange({ coordinates, label, id })
+                props.polyLineListChange({ coordinates, label, id })
             } else {
                 label = prompt('Insert the label here!');
 
-                label && props.polygonListChange({ coordinates, label, id })
+                label && props.polyLineListChange({ coordinates, label, id })
                 setfirst(false)
             }
         },
