@@ -109,26 +109,40 @@ export const Map = ({ filterState, categoryState }) => {
 
             {!loading && filterState.showAll &&
                 markerList.map((e, i) => {
-                    return <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
-                        <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
-                    </Marker >
+                    return categoryState === "None" ?
+                        <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
+                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                        </Marker >
+                        : categoryState === e.category &&
+                        <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
+                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                        </Marker >
                 })
             }
 
             {!loading && filterState.showAll &&
                 polyLineList.map((e, i) => {
-                    console.log(e)
-                    return <Polyline key={i} positions={e.coordinates} >
-                        <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
-                    </Polyline >
+                    return categoryState === "None" ?
+                        <Polyline key={i} positions={e.coordinates} >
+                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                        </Polyline >
+                        : categoryState === e.category &&
+                        <Polyline key={i} positions={e.coordinates} >
+                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                        </Polyline >
                 })
             }
 
             {!loading && filterState.showAll &&
                 polygonList.map((e, i) => {
-                    return <Polygon key={i} positions={e.coordinates} >
-                        <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
-                    </Polygon >
+                    return categoryState === "None" ?
+                        <Polygon key={i} positions={e.coordinates} >
+                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                        </Polygon >
+                        : categoryState === e.category &&
+                        <Polygon key={i} positions={e.coordinates} >
+                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                        </Polygon >
                 })
             }
 
@@ -138,9 +152,14 @@ export const Map = ({ filterState, categoryState }) => {
             {!loading && !filterState.showAll &&
                 filterState.showMarkers && (
                     markerList.map((e, i) => {
-                        return <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
-                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
-                        </Marker >
+                        return categoryState === "None" ?
+                            <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
+                                <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                            </Marker >
+                            : categoryState === e.category &&
+                            <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
+                                <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                            </Marker >
                     })
                 )
             }
@@ -148,9 +167,14 @@ export const Map = ({ filterState, categoryState }) => {
             {!loading && !filterState.showAll &&
                 filterState.showLines && (
                     polyLineList.map((e, i) => {
-                        return <Polyline key={i} positions={e.coordinates} >
-                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
-                        </Polyline >
+                        return categoryState === "None" ?
+                            <Polyline key={i} positions={e.coordinates} >
+                                <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                            </Polyline >
+                            : categoryState === e.category &&
+                            <Polyline key={i} positions={e.coordinates} >
+                                <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                            </Polyline >
                     })
                 )
             }
@@ -158,35 +182,18 @@ export const Map = ({ filterState, categoryState }) => {
             {!loading && !filterState.showAll &&
                 filterState.showPolygon && (
                     polygonList.map((e, i) => {
-                        return <Polygon key={i} positions={e.coordinates} >
-                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
-                        </Polygon >
+                        return categoryState === "None" ?
+                            <Polygon key={i} positions={e.coordinates} >
+                                <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                            </Polygon >
+                            : categoryState === e.category &&
+                            <Polygon key={i} positions={e.coordinates} >
+                                <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                            </Polygon >
                     })
                 )
             }
 
-            {/* <LocationMarker /> */}
         </MapContainer>
     )
 }
-
-
-// function LocationMarker() {
-//     const [position, setPosition] = useState(null)
-//     const map = useMapEvents({
-//         click() {
-//             map.locate()
-//         },
-//         locationfound(e) {
-//             setPosition(e.latlng)
-//             map.flyTo(e.latlng, map.getZoom())
-//         },
-//     })
-
-//     return position === null ? null : (
-//         <Marker position={position}>
-//             <Popup>You are here</Popup>
-//         </Marker>
-//     )
-
-// }

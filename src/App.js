@@ -16,7 +16,7 @@ function App() {
   }
   )
 
-  const [categoryState, setcategoryState] = useState("none")
+  const [categoryState, setcategoryState] = useState("None")
 
   const handleFilterState = async (e) => {
     let obj = filterState

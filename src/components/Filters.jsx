@@ -21,10 +21,10 @@ export const Filters = (props) => {
   ]);
 
   const [categories, setcategories] = useState([
-    { id: 'none', name: 'None' },
+    { id: 'None', name: 'None' },
   ])
 
-  const [selectedCategory, setselectedCategory] = useState("none")
+  const [selectedCategory, setselectedCategory] = useState("None")
 
   // get all"none"ories
   useEffect(() => {
