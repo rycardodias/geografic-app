@@ -16,6 +16,8 @@ function App() {
   }
   )
 
+  const [categoryState, setcategoryState] = useState("none")
+
   const handleFilterState = async (e) => {
     let obj = filterState
 
@@ -23,13 +25,17 @@ function App() {
     setfilterState(obj)
   }
 
+  const handleCategoryState = async (e) => {
+    await setcategoryState(e)
+  }
+
   return (
     <div className="App">
       <Container fluid>
         <Row >
-          <Col><Filters changeFilterState={handleFilterState} /></Col>
+          <Col><Filters changeFilterState={handleFilterState} changeCategoryState={handleCategoryState} /></Col>
 
-          <Col sm={10}><Map filterState={filterState} /></Col>
+          <Col sm={10}><Map filterState={filterState} categoryState={categoryState} /></Col>
         </Row>
       </Container>
     </div>

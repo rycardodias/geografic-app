@@ -4,7 +4,7 @@ import AddMarker from './events/AddMarker'
 import AddPolygon from './events/AddPolygon'
 import AddPolyLine from './events/AddPolyLine'
 
-export const Map = ({ filterState }) => {
+export const Map = ({ filterState, categoryState }) => {
     const [loading, setloading] = useState(true)
     const [markerList, setmarkerList] = useState([])
     const [polyLineList, setpolyLineList] = useState([])
@@ -100,17 +100,17 @@ export const Map = ({ filterState }) => {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
-            {filterState.addingMarkers && <AddMarker markerListChange={handleMarkerListChange} />}
-            {filterState.addingLines && <AddPolyLine polyLineListChange={handlePolyLineListChange} />}
+            {filterState.addingMarkers && <AddMarker markerListChange={handleMarkerListChange} category={categoryState} />}
+            {filterState.addingLines && <AddPolyLine polyLineListChange={handlePolyLineListChange} category={categoryState} />}
 
-            {filterState.addingPolygon && <AddPolygon polygonListChange={handlePolygonListChange} />}
+            {filterState.addingPolygon && <AddPolygon polygonListChange={handlePolygonListChange} category={categoryState} />}
 
             {/* SHOWING ZONE */}
 
             {!loading && filterState.showAll &&
                 markerList.map((e, i) => {
                     return <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
-                        <Popup>{e.label}</Popup>
+                        <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
                     </Marker >
                 })
             }
@@ -119,7 +119,7 @@ export const Map = ({ filterState }) => {
                 polyLineList.map((e, i) => {
                     console.log(e)
                     return <Polyline key={i} positions={e.coordinates} >
-                        <Popup>{e.label}</Popup>
+                        <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
                     </Polyline >
                 })
             }
@@ -127,7 +127,7 @@ export const Map = ({ filterState }) => {
             {!loading && filterState.showAll &&
                 polygonList.map((e, i) => {
                     return <Polygon key={i} positions={e.coordinates} >
-                        <Popup>{e.label}</Popup>
+                        <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
                     </Polygon >
                 })
             }
@@ -139,7 +139,7 @@ export const Map = ({ filterState }) => {
                 filterState.showMarkers && (
                     markerList.map((e, i) => {
                         return <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
-                            <Popup>{e.label}</Popup>
+                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
                         </Marker >
                     })
                 )
@@ -149,7 +149,7 @@ export const Map = ({ filterState }) => {
                 filterState.showLines && (
                     polyLineList.map((e, i) => {
                         return <Polyline key={i} positions={e.coordinates} >
-                            <Popup>{e.label}</Popup>
+                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
                         </Polyline >
                     })
                 )
@@ -159,11 +159,12 @@ export const Map = ({ filterState }) => {
                 filterState.showPolygon && (
                     polygonList.map((e, i) => {
                         return <Polygon key={i} positions={e.coordinates} >
-                            <Popup>{e.label}</Popup>
+                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
                         </Polygon >
                     })
                 )
             }
+
             {/* <LocationMarker /> */}
         </MapContainer>
     )

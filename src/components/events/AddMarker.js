@@ -12,8 +12,9 @@ export default function AddMarker(props) {
         },
         mouseup() {
             let label = prompt('Insert the label here!');
+            let category = props.category
 
-            label && props.markerListChange({ coordinates, label })
+            label && props.markerListChange({ coordinates, label, category })
         },
 
     })

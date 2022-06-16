@@ -16,13 +16,13 @@ export default function AddPolyLine(props) {
         },
         mouseup() {
             let label = ''
-
+            let category = props.category
             if (!first) {
-                props.polyLineListChange({ coordinates, label, id })
+                props.polyLineListChange({ coordinates, label, id, category })
             } else {
                 label = prompt('Insert the label here!');
 
-                label && props.polyLineListChange({ coordinates, label, id })
+                label && props.polyLineListChange({ coordinates, label, id, category })
                 setfirst(false)
             }
         },

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { ToggleButton } from 'react-bootstrap';
+import { Dropdown, ListGroup, ListGroupItem, ToggleButton, Form, Button } from 'react-bootstrap';
 
 
 export const Filters = (props) => {
   const [loading, setloading] = useState(false)
+  const [name, setName] = useState("");
 
   const [drawradios, setdrawradios] = useState([
     { id: 'none', name: 'None', value: true },
@@ -19,6 +20,32 @@ export const Filters = (props) => {
     { id: 'showPolygon', name: 'Polygon', value: false },
   ]);
 
+  const [categories, setcategories] = useState([
+    { id: 'none', name: 'None' },
+  ])
+
+  const [selectedCategory, setselectedCategory] = useState("none")
+
+  // get all"none"ories
+  useEffect(() => {
+    const list = JSON.parse(localStorage.getItem('categoryList')) || [];
+    list.length > 0 && setcategories(list)
+  }, [])
+
+  // add categories when new category is added
+  useEffect(() => {
+    const list = JSON.parse(localStorage.getItem('categoryList')) || [];
+    categories.length > list.length &&
+      localStorage.setItem('categoryList', JSON.stringify(categories))
+  }, [categories]);
+
+  function handleSelectCategory(e) {
+    setselectedCategory(e.target.value)
+
+    props.changeCategoryState(e.target.value)
+  }
+
+
   async function handleDrawRadioChange(e) {
     await setloading(true)
     let objIndex = drawradios.findIndex((i => i.id === e.target.id));
@@ -32,11 +59,11 @@ export const Filters = (props) => {
 
     let drawArray = [];
 
-      await newObj.filter(i => i.id !== 'none').map(item => {
-        drawArray = [...drawArray, { [item['id']]: item.value }]
-      })
+    await newObj.filter(i => i.id !== 'none').map(item => {
+      drawArray = [...drawArray, { [item['id']]: item.value }]
+    })
 
-      await props.changeFilterState(drawArray)
+    await props.changeFilterState(drawArray)
   }
 
   async function handleShowRadioChange(e) {
@@ -48,7 +75,7 @@ export const Filters = (props) => {
     newObj[objIndex].value = Boolean(e.target.value)
 
     await setshowradios(newObj)
-    
+
     await setloading(false)
 
     let showArray = [];
@@ -58,7 +85,6 @@ export const Filters = (props) => {
     })
 
     await props.changeFilterState(showArray)
-
   }
 
   useEffect(() => {
@@ -71,15 +97,18 @@ export const Filters = (props) => {
 
       await props.changeFilterState(drawArray)
 
-      // let showArray = [];
-
-      // // await showradios.map(item => {
-      // //   showArray = [...showArray, { [item['id']]: item.value }]
-      // // })
-
-      // // await props.changeFilterState(showArray)
     })()
   }, [loading])
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    console.log(name)
+
+    await setloading(true)
+    await setcategories(old => [...old, { id: name, name: name }])
+    await setName("")
+    await setloading(false)
+  }
 
 
   return (
@@ -114,6 +143,25 @@ export const Filters = (props) => {
           {radio.name}
         </ToggleButton>
       ))}
+
+      <select
+        value={selectedCategory}
+        onChange={e => handleSelectCategory(e)}>
+        {!loading && categories.map(o => (
+          <option key={o.id} >{o.name}</option>
+        ))}
+      </select>
+
+      <Form>
+        <Form.Group className="mb-3">
+          <Form.Control id="category" type="text" placeholder="Enter category" value={name}
+            onChange={(e) => setName(e.target.value)} />
+        </Form.Group>
+
+        <Button variant="primary" type="submit" onClick={handleSubmit}>
+          Submit
+        </Button>
+      </Form>
     </>
   )
 }

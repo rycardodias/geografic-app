@@ -16,13 +16,14 @@ export default function AddPolygon(props) {
         },
         mouseup() {
             let label = ''
+            let category = props.category
 
             if (!first) {
-                props.polygonListChange({ coordinates, label, id })
+                props.polygonListChange({ coordinates, label, id, category })
             } else {
                 label = prompt('Insert the label here!');
 
-                label && props.polygonListChange({ coordinates, label, id })
+                label && props.polygonListChange({ coordinates, label, id, category })
                 setfirst(false)
             }
         },
