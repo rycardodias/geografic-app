@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, Polygon, Polyline } from 'react
 import AddMarker from './events/AddMarker'
 import AddPolygon from './events/AddPolygon'
 import AddPolyLine from './events/AddPolyLine'
+import distanceLine from './distance/lineDistance'
 
 export const Map = ({ filterState, categoryState }) => {
     const [loading, setloading] = useState(true)
@@ -24,6 +25,7 @@ export const Map = ({ filterState, categoryState }) => {
 
         let objIndex = list.findIndex((i => i.id === e.id));
         if (objIndex === -1) {
+            console.log(e)
             await setpolyLineList(old => [...old, e])
         } else {
             let newList = [...polyLineList]
@@ -124,11 +126,17 @@ export const Map = ({ filterState, categoryState }) => {
                 polyLineList.map((e, i) => {
                     return categoryState === "None" ?
                         <Polyline key={i} positions={e.coordinates} >
-                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                            <Popup>{e.label}
+                                <br />{`Category: ${e.category}`}<br />
+                                {e.coordinates.length === 2 && `Distance: ${distanceLine(e.coordinates)}`}
+                            </Popup>
                         </Polyline >
                         : categoryState === e.category &&
                         <Polyline key={i} positions={e.coordinates} >
-                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                            <Popup>{e.label}
+                                <br />{`Category: ${e.category}`}<br />
+                                {e.coordinates.length === 2 && `Distance: ${distanceLine(e.coordinates)}`}
+                            </Popup>
                         </Polyline >
                 })
             }
@@ -169,11 +177,17 @@ export const Map = ({ filterState, categoryState }) => {
                     polyLineList.map((e, i) => {
                         return categoryState === "None" ?
                             <Polyline key={i} positions={e.coordinates} >
-                                <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                                <Popup>{e.label}
+                                    <br />{`Category: ${e.category}`}<br />
+                                    {e.coordinates.length === 2 && `Distance: ${distanceLine(e.coordinates)}`}
+                                </Popup>
                             </Polyline >
                             : categoryState === e.category &&
                             <Polyline key={i} positions={e.coordinates} >
-                                <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+                                <Popup>{e.label}
+                                    <br />{`Category: ${e.category}`}<br />
+                                    {e.coordinates.length === 2 && `Distance: ${distanceLine(e.coordinates)}`}
+                                </Popup>
                             </Polyline >
                     })
                 )

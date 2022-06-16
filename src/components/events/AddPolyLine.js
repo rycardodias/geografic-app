@@ -1,5 +1,6 @@
 import { useMapEvents } from 'react-leaflet'
 import { useState } from 'react'
+import distanceLine from '../distance/lineDistance'
 
 export default function AddPolyLine(props) {
     const [coordinates, setcoordinates] = useState([])
@@ -18,6 +19,7 @@ export default function AddPolyLine(props) {
             let label = ''
             let category = props.category
             if (!first) {
+
                 props.polyLineListChange({ coordinates, label, id, category })
             } else {
                 label = prompt('Insert the label here!');
