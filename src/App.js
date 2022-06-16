@@ -33,9 +33,14 @@ function App() {
     <div className="App">
       <Container fluid>
         <Row >
-          <Col><Filters changeFilterState={handleFilterState} changeCategoryState={handleCategoryState} /></Col>
-
-          <Col sm={10}><Map filterState={filterState} categoryState={categoryState} /></Col>
+          <Col>
+            <Filters changeFilterState={handleFilterState} changeCategoryState={handleCategoryState} />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Map filterState={filterState} categoryState={categoryState} />
+          </Col>
         </Row>
       </Container>
     </div>
