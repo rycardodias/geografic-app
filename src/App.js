@@ -28,18 +28,25 @@ function App() {
   const handleCategoryState = async (e) => {
     await setcategoryState(e)
   }
+  
+  const [distance, setdistance] = useState(0)
+
+  const handleMarkerDistance = async (e) => {
+    console.log(e)
+    setdistance(e)
+  }
 
   return (
     <div className="App">
       <Container fluid>
         <Row >
           <Col>
-            <Filters changeFilterState={handleFilterState} changeCategoryState={handleCategoryState} />
+            <Filters changeFilterState={handleFilterState} changeCategoryState={handleCategoryState} markerDistance={distance} />
           </Col>
         </Row>
         <Row>
           <Col>
-            <Map filterState={filterState} categoryState={categoryState} />
+            <Map filterState={filterState} categoryState={categoryState} markerDistance={handleMarkerDistance} />
           </Col>
         </Row>
       </Container>

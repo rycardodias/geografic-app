@@ -4,8 +4,9 @@ import AddMarker from './events/AddMarker'
 import AddPolygon from './events/AddPolygon'
 import AddPolyLine from './events/AddPolyLine'
 import distanceLine from './distance/lineDistance'
+import areaCalculator from './distance/areaCalculator'
 
-export const Map = ({ filterState, categoryState }) => {
+export const Map = ({ filterState, categoryState, markerDistance }) => {
     const [loading, setloading] = useState(true)
     const [markerList, setmarkerList] = useState([])
     const [polyLineList, setpolyLineList] = useState([])
@@ -94,13 +95,77 @@ export const Map = ({ filterState, categoryState }) => {
 
     }, []);
 
+    const [markerCoordinates, setmarkerCoordinates] = useState([])
+
+
+    function handleMarkerClick(coordinates) {
+        setloading(true)
+        setmarkerCoordinates(old => [...old, coordinates])
+
+        setloading(false)
+    }
+
+    useEffect(() => {
+        const size = markerCoordinates.length
+
+        if (size > 1) {
+            let newArray = []
+            newArray.push(markerCoordinates[size - 2])
+            newArray.push(markerCoordinates[size - 1])
+
+            let distance = distanceLine(newArray)
+            markerDistance(distance)
+        }
+    }, [markerCoordinates])
+
+
+    const markerDisplay = markerList.map((e, i) => {
+        return categoryState === "None" ?
+            <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}
+                eventHandlers={{
+                    click: (e) => { handleMarkerClick(e.latlng) }
+                }}>
+                <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+            </Marker >
+            : categoryState === e.category &&
+            <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]} onClick={() => alert("teste")}>
+                <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
+            </Marker >
+    });
+
+    const lineDisplay = polyLineList.map((e, i) => {
+        return categoryState === "None" ?
+            <Polyline key={i} positions={e.coordinates} >
+                <Popup>{e.label}
+                    <br />{`Category: ${e.category}`}<br />
+                    {e.coordinates.length === 2 && `Distance: ${distanceLine(e.coordinates)}`}
+                </Popup>
+            </Polyline >
+            : categoryState === e.category &&
+            <Polyline key={i} positions={e.coordinates} >
+                <Popup>{e.label}
+                    <br />{`Category: ${e.category}`}<br />
+                    {e.coordinates.length === 2 && `Distance: ${distanceLine(e.coordinates)}`}
+                </Popup>
+            </Polyline >
+    })
+
+    const polygonDisplay = polygonList.map((e, i) => {
+        return categoryState === "None" ?
+            <Polygon key={i} positions={e.coordinates} >
+                <Popup>{e.label}<br />{`Category: ${e.category}`}<br />{`Area: ${areaCalculator(e.coordinates)}`} </Popup>
+            </Polygon >
+            : categoryState === e.category &&
+            <Polygon key={i} positions={e.coordinates} >
+                <Popup>{e.label}<br />{`Category: ${e.category}`}<br />{`Area: ${areaCalculator(e.coordinates)}`}</Popup>
+            </Polygon >
+    })
+
 
     return (
         <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false} style={{ height: '700px' }}>
-            <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+            <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
             {filterState.addingMarkers && <AddMarker markerListChange={handleMarkerListChange} category={categoryState} />}
             {filterState.addingLines && <AddPolyLine polyLineListChange={handlePolyLineListChange} category={categoryState} />}
@@ -109,105 +174,13 @@ export const Map = ({ filterState, categoryState }) => {
 
             {/* SHOWING ZONE */}
 
-            {!loading && filterState.showAll &&
-                markerList.map((e, i) => {
-                    return categoryState === "None" ?
-                        <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
-                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
-                        </Marker >
-                        : categoryState === e.category &&
-                        <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
-                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
-                        </Marker >
-                })
-            }
+            {/* {!loading && console.log(markerCoordinates)} */}
 
-            {!loading && filterState.showAll &&
-                polyLineList.map((e, i) => {
-                    return categoryState === "None" ?
-                        <Polyline key={i} positions={e.coordinates} >
-                            <Popup>{e.label}
-                                <br />{`Category: ${e.category}`}<br />
-                                {e.coordinates.length === 2 && `Distance: ${distanceLine(e.coordinates)}`}
-                            </Popup>
-                        </Polyline >
-                        : categoryState === e.category &&
-                        <Polyline key={i} positions={e.coordinates} >
-                            <Popup>{e.label}
-                                <br />{`Category: ${e.category}`}<br />
-                                {e.coordinates.length === 2 && `Distance: ${distanceLine(e.coordinates)}`}
-                            </Popup>
-                        </Polyline >
-                })
-            }
+            {!loading && (filterState.showAll || filterState.showMarkers) && markerDisplay}
 
-            {!loading && filterState.showAll &&
-                polygonList.map((e, i) => {
-                    return categoryState === "None" ?
-                        <Polygon key={i} positions={e.coordinates} >
-                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
-                        </Polygon >
-                        : categoryState === e.category &&
-                        <Polygon key={i} positions={e.coordinates} >
-                            <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
-                        </Polygon >
-                })
-            }
+            {!loading && (filterState.showAll || filterState.showLines) && lineDisplay}
 
-
-            {/* SHOW INDIVIDUAL */}
-
-            {!loading && !filterState.showAll &&
-                filterState.showMarkers && (
-                    markerList.map((e, i) => {
-                        return categoryState === "None" ?
-                            <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
-                                <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
-                            </Marker >
-                            : categoryState === e.category &&
-                            <Marker key={i} position={[e.coordinates.lat, e.coordinates.lng]}>
-                                <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
-                            </Marker >
-                    })
-                )
-            }
-
-            {!loading && !filterState.showAll &&
-                filterState.showLines && (
-                    polyLineList.map((e, i) => {
-                        return categoryState === "None" ?
-                            <Polyline key={i} positions={e.coordinates} >
-                                <Popup>{e.label}
-                                    <br />{`Category: ${e.category}`}<br />
-                                    {e.coordinates.length === 2 && `Distance: ${distanceLine(e.coordinates)}`}
-                                </Popup>
-                            </Polyline >
-                            : categoryState === e.category &&
-                            <Polyline key={i} positions={e.coordinates} >
-                                <Popup>{e.label}
-                                    <br />{`Category: ${e.category}`}<br />
-                                    {e.coordinates.length === 2 && `Distance: ${distanceLine(e.coordinates)}`}
-                                </Popup>
-                            </Polyline >
-                    })
-                )
-            }
-
-            {!loading && !filterState.showAll &&
-                filterState.showPolygon && (
-                    polygonList.map((e, i) => {
-                        return categoryState === "None" ?
-                            <Polygon key={i} positions={e.coordinates} >
-                                <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
-                            </Polygon >
-                            : categoryState === e.category &&
-                            <Polygon key={i} positions={e.coordinates} >
-                                <Popup>{e.label}<br />{`Category: ${e.category}`}</Popup>
-                            </Polygon >
-                    })
-                )
-            }
-
-        </MapContainer>
+            {!loading && (filterState.showAll || filterState.showPolygon) && polygonDisplay}
+        </MapContainer >
     )
 }

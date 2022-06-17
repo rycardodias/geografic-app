@@ -148,10 +148,10 @@ export const Filters = (props) => {
             </ToggleButton>
           ))}
         </Col>
-        <Col sm={3}>
+        <Col sm={2}>
           Category: <br />
           <select style={
-            {height: '2.5rem'}
+            { height: '2.5rem' }
           }
             value={selectedCategory}
             onChange={e => handleSelectCategory(e)}>
@@ -159,16 +159,20 @@ export const Filters = (props) => {
               <option key={o.id} >{o.name}</option>
             ))}
           </select>
+
+        </Col>
+        <Col sm={1}>
+          Distance: <br />{parseInt(props.markerDistance)}
         </Col>
         <Col>
-            Add Category: <br />
+          Add Category: <br />
           <Form className='d-flex'>
             <Form.Group className="mb-3">
               <Form.Control id="category" type="text" placeholder="Enter category" value={name}
                 onChange={(e) => setName(e.target.value)} />
             </Form.Group>
 
-            <Button style={{ height: '2.5rem'}} variant="primary" type="submit" onClick={handleSubmit}>
+            <Button style={{ height: '2.5rem' }} variant="primary" type="submit" onClick={handleSubmit}>
               Submit
             </Button>
           </Form>
